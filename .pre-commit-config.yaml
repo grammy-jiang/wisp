@@ -1,10 +1,105 @@
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
+exclude: ^\.gitignore$
+
 repos:
+  # ==========================================================================
+  # General file quality hooks
+  # ==========================================================================
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
     hooks:
+      # Whitespace and file formatting
       - id: trailing-whitespace
       - id: end-of-file-fixer
+      - id: mixed-line-ending
+        args: [--fix=lf]
+      - id: fix-byte-order-marker
+
+      # File validation
       - id: check-yaml
+      - id: check-toml
+      - id: check-json
+      - id: check-xml
+
+      # Git hygiene
       - id: check-added-large-files
+      - id: check-merge-conflict
+      - id: check-case-conflict
+      - id: check-symlinks
+      - id: destroyed-symlinks
+      - id: check-vcs-permalinks
+      - id: no-commit-to-branch
+        args: [--branch=main, --branch=master]
+
+      # Python specific
+      - id: check-ast
+      - id: debug-statements
+      - id: check-builtin-literals
+      - id: name-tests-test
+        args: [--pytest-test-first]
+
+      # Security
+      - id: detect-aws-credentials
+        args: [--allow-missing-credentials]
+      - id: detect-private-key
+
+      # Shell
+      - id: check-executables-have-shebangs
+      - id: check-shebang-scripts-are-executable
+
+  # ==========================================================================
+  # Python formatting: isort → black (order matters)
+  # ==========================================================================
+  - repo: https://github.com/PyCQA/isort
+    rev: 8.0.1
+    hooks:
+      - id: isort
+
+  - repo: https://github.com/psf/black
+    rev: 26.3.1
+    hooks:
+      - id: black
+
+  # ==========================================================================
+  # Python linting: ruff (lint only, no formatting)
+  # ==========================================================================
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.7
+    hooks:
+      - id: ruff
+        args: [--fix]
+
+  # ==========================================================================
+  # Python type checking: mypy
+  # ==========================================================================
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.19.1
+    hooks:
+      - id: mypy
+        additional_dependencies: []
+
+  # ==========================================================================
+  # Shell script linting
+  # ==========================================================================
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.11.0.1
+    hooks:
+      - id: shellcheck
+
+  # ==========================================================================
+  # Makefile linting
+  # ==========================================================================
+  - repo: https://github.com/mrtazz/checkmake
+    rev: 0.3.2
+    hooks:
+      - id: checkmake
+
+  # ==========================================================================
+  # Markdown linting
+  # ==========================================================================
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.48.0
+    hooks:
+      - id: markdownlint
+        args: [--fix]
